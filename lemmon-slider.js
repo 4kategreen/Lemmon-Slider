@@ -36,7 +36,11 @@
 					    $items = $sliderContainer.find( options.items ),
 					    originalWidth = 1;
 
-					$items.each(function(){ originalWidth += $(this).outerWidth(true) });
+					$items.each(function(){
+						// the next line added by kate to test the ability to set static heights
+						$(this).width($slider.width());
+						originalWidth += $(this).outerWidth(true);
+					});
 					$sliderContainer.width( originalWidth );
 					
 					// slide to last item
@@ -57,6 +61,13 @@
 					
 					$slider.items = $items;
 					$slider.options = options;
+
+					if ( options.random ) {
+						var randomStart = (function(min, max) {
+						  return Math.floor(Math.random() * (max - min + 1)) + min;
+						})(0,$items.length);
+						slideTo(0,$slider,0,randomStart,0);
+					}
 					
 					// first item
 					//$items.filter( ':first' ).addClass( 'active' );
@@ -309,8 +320,9 @@
 		'slideToLast' : false,
 		'slider'      : '> *:first',
 		// since 0.2
-		'infinite'    : false
-		
+		'infinite'    : false,
+		// kate did this
+		'random'			: false
 	}
 
 })( jQuery );
