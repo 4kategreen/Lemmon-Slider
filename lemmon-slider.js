@@ -9,6 +9,12 @@
  * Version: 0.2 (9/6/2011)
  * Requires: jQuery v1.4+
  *
+ * Modified by Kate Green for the Chronicle of Higher Education
+ * kate.green@chronicle.com
+ * Github: 4kategreen
+ * This upgrade adds a "random" option, which starts the slider on a 
+ * random element in the group. 
+ *
  * Licensed under the MIT license:
  *   http://www.opensource.org/licenses/mit-license.php
  */
@@ -37,7 +43,7 @@
 					    originalWidth = 1;
 
 					$items.each(function(){
-						// the next line added by kate to test the ability to set static heights
+						// fixed width
 						$(this).width($slider.width());
 						originalWidth += $(this).outerWidth(true);
 					});
@@ -64,9 +70,9 @@
 
 					if ( options.random ) {
 						var randomStart = (function(min, max) {
-						  return Math.floor(Math.random() * (max - min + 1)) + min;
+						  return Math.floor(Math.random() * ((max-1) - min)) + min;
 						})(0,$items.length);
-						slideTo(0,$slider,0,randomStart,0);
+						slideTo(0,$slider,0,randomStart);
 					}
 					
 					// first item
@@ -253,23 +259,27 @@
 	function slideTo( e, $slider, x, i, t ){
 		
 		$slider.items.filter( 'li:eq(' + i + ')' ).addClass( 'active' ).siblings( '.active' ).removeClass( 'active' );
-		
-		if ( typeof t == 'undefined' ){
-			t = 'fast';
+
+		// determine slide-to width
+		var slideWidth = 0;
+		for (var w=0;w<i;w++) {
+			slideWidth+= $slider.items.filter('li:eq('+w+')').width();
 		}
+		
 		if ( t ){
 			$slider.animate({ 'scrollLeft' : x }, t, function(){
 				checkInfinite( $slider );
 			});
 		} else {
 			var time = 0;
-			$slider.scrollLeft( x );
+			$slider.scrollLeft( slideWidth );
 			checkInfinite( $slider );
 		}
 		
 		//if ( typeof $slider.options.slide == 'function' ) $slider.options.slide( e, i, time );
 		
 	}
+
 	function checkInfinite( $slider ){
 		
 		var $active = $slider.items.filter( '.active' );
